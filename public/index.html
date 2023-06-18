@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/cssdocs/style.css">
+    <title>Achatons</title>
+</head>
+<body>
+    <div class="bg"></div>
+    <div class="wrapper">
+        <div class="container">
+            <div class="flexRowCenter name">
+                <h2>Achatons</h2>
+            </div>
+            <div class="text-message"></div>
+            <div class="flexRowCenter text-input-container">
+                <input id="submit-message-value" placeholder="Envoyer un doux message" type="text">
+                <span id="submit-btn"><i class="fa-solid fa-paper-plane"></i></span>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="./jsdocs/app.js"></script>
+</html>
