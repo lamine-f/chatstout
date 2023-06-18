@@ -56,6 +56,46 @@ body{
     overflow-y: scroll;
 }
 
+/* Hide the scroll bar, but keep it functional */
+.text-message {
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  
+  /* For WebKit-based browsers (Chrome, Safari) */
+  .text-message::-webkit-scrollbar {
+    width: 6px;
+    background-color: transparent;
+  }
+  
+  .text-message::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+  
+  .text-message::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  
+  /* For Firefox */
+  .text-message {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  
+  .text-message::-moz-scrollbar {
+    width: 6px;
+    background-color: transparent;
+  }
+  
+  .text-message::-moz-scrollbar-thumb {
+    background-color: transparent;
+  }
+  
+  .text-message::-moz-scrollbar-track {
+    background-color: transparent;
+  }
+  
 .message-container{
     display: flex;
     gap: 10px;

@@ -59,6 +59,7 @@ app.get('/remove/iamroot', (req, res) => {
     const db = new sqlite3.Database(path.resolve("./database/chat-app.db"));
     db.serialize(() => {
         db.run('DELETE FROM messages WHERE 1');
+        db.run('DELETE FROM users WHERE 1');
     });
     res.send({ valid: true });
 });

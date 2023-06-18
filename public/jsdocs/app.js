@@ -33,6 +33,10 @@ function getLogin (message) {
 
                 }else{
                     localStorage.setItem("name", result.value.login);
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
                     Swal.fire({
                         title: `Bienvenue ${result.value.login} :)`,
                     })
