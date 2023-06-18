@@ -7,30 +7,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="./cssdocs/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <link rel="stylesheet" href="/cssdocs/style.css">
+
     <title>Achatons</title>
 </head>
 <body>
-
     <div class="wrapper">
         <div class="container">
             <div class="flexRowCenter name">
                 <h2>Achatons</h2>
             </div>
-            <div class="text-message">
-                <div class="left-message">
-                    <p class="message-sender">Astu:</p>
-                    <p class="message-value">Hello</p>
-                </div>
-                <div class="right-message">
-                    <p class="message-sender">Lord:</p>
-                    <p>hi!</p>
-                </div>
-
-            </div>
+            <div class="text-message"></div>
             <div class="flexRowCenter text-input-container">
-                <input id="submit-message-value" type="text">
-                <button id="submit-btn">Envoyer</button>
+                <input id="submit-message-value" placeholder="Envoyer un doux message" type="text">
+                <span id="submit-btn"><i class="fa-solid fa-paper-plane"></i></span>
             </div>
         </div>
     </div>
@@ -38,14 +31,87 @@
 </body>
 
 <script>
-    const sendMessage = document.querySelector("input#submit-message-value");
-    const sendBtn = document.querySelector("button#submit-btn");
-    sendBtn.addEventListener('click', () => {
-        const message = sendMessage.value; 
-        sendMessage.value = "";
-        console.log(message);
-    });
+//set name:
+localStorage.setItem("lastname", "Smith");
+localStorage.getItem("lastname");
+    if (localStorage.getItem("name") == "" || localStorage.getItem("name") == null){
+
+        Swal.fire({
+            title: 'Veuillez saisir un pseudo',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: false,
+            confirmButtonText: 'Valider',
+            showLoaderOnConfirm: true,
+            preConfirm: (name) => {
+                localStorage.setItem('name', name);
+                return name; 
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                title: `Bienvenue ${result.value}`,
+                imageUrl: result.value.avatar_url,
+                })
+            }
+        })
+    }
 
 </script>
 
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    const textMessageContainer = document.querySelector("div.text-message");
+
+    const sendMessage = document.querySelector("input#submit-message-value");
+    const sendBtn = document.querySelector("span#submit-btn");
+
+    // Establish a WebSocket connection
+    const socket = io();
+    let host = null;
+
+    socket.on("connect", () => {
+        host = socket.id;
+        textMessageContainer.innerHTML = "";
+        socket.emit('s-id', socket.id);
+    });
+
+    socket.on("start", () => {
+        textMessageContainer.innerHTML = "";
+    });
+
+    socket.on('receiveMessage', (message) => {
+        value = JSON.parse(message);
+        showMessage(value);
+    });
+
+    function getReceiveMessageHTML (senderName, messageValue) {
+        return `<div class="left-message"> <div class="message-container"> <p class="message-sender">${senderName}:</p><p class="message-value">${messageValue}</p></div></div>`;
+    }
+
+    function getSendMessageHTML (senderName, messageValue) {
+        return `<div class="right-message"> <div class="message-container"> <p class="message-sender">${senderName}:</p><p class="message-value">${messageValue}</p></div></div>`;
+    }
+
+    function showMessage (value) {
+        if (value.author === host){
+            textMessageContainer.innerHTML += getSendMessageHTML(value.name , value.message)
+        }else{
+            textMessageContainer.innerHTML += getReceiveMessageHTML(value.name, value.message)
+        }
+    }
+
+    
+    sendBtn.addEventListener('click', () => {
+        const message = JSON.stringify({author:host , name: localStorage.getItem('name') , message: sendMessage.value}); 
+        socket.emit('sendMessage', message );
+        sendMessage.value = "";
+    });
+
+
+</script>
 </html>
