@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./cssdocs/style.css">
+    <title>Achatons</title>
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="container">
+            <div class="flexRowCenter name">
+                <h2>Achatons</h2>
+            </div>
+            <div class="text-message">
+                <div class="left-message">
+                    <p class="message-sender">Astu:</p>
+                    <p class="message-value">Hello</p>
+                </div>
+                <div class="right-message">
+                    <p class="message-sender">Lord:</p>
+                    <p>hi!</p>
+                </div>
+
+            </div>
+            <div class="flexRowCenter text-input-container">
+                <input id="submit-message-value" type="text">
+                <button id="submit-btn">Envoyer</button>
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+<script>
+    const sendMessage = document.querySelector("input#submit-message-value");
+    const sendBtn = document.querySelector("button#submit-btn");
+    sendBtn.addEventListener('click', () => {
+        const message = sendMessage.value; 
+        sendMessage.value = "";
+        console.log(message);
+    });
+
+</script>
+
+</html>
