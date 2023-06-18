@@ -32,32 +32,55 @@
 
 <script>
 //set name:
-localStorage.setItem("lastname", "Smith");
-localStorage.getItem("lastname");
-    if (localStorage.getItem("name") == "" || localStorage.getItem("name") == null){
 
-        Swal.fire({
-            title: 'Veuillez saisir un pseudo',
+function getLogin (message) {
+
+    Swal.fire({
+            title: message,
             input: 'text',
             inputAttributes: {
                 autocapitalize: 'off'
             },
             showCancelButton: false,
-            confirmButtonText: 'Valider',
+            confirmButtonText: 'Look up',
             showLoaderOnConfirm: true,
-            preConfirm: (name) => {
-                localStorage.setItem('name', name);
-                return name; 
+            preConfirm: (login) => {
+                return fetch(`/adduser/${login}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(response.statusText)
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(
+                        `Votre compte n'a pas pu etre créer`
+                    )
+                })
             },
             allowOutsideClick: () => !Swal.isLoading()
             }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                title: `Bienvenue ${result.value}`,
-                imageUrl: result.value.avatar_url,
-                })
+
+                if (!result.value.valid){
+                    getLogin("Déja pris !");
+
+                }else{
+                    localStorage.setItem("name", result.value.login);
+                    Swal.fire({
+                        title: `Bienvenue ${result.value.login} :)`,
+                    })
+                }
+  
+            }else{
+                getLogin();
             }
         })
+
+}
+
+    if (localStorage.getItem("name") == "" || localStorage.getItem("name") == null){
+        getLogin("Veuillez saisir un pseudo");
     }
 
 </script>
@@ -65,6 +88,7 @@ localStorage.getItem("lastname");
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
+    const LOGIN = localStorage.getItem('name');
     const textMessageContainer = document.querySelector("div.text-message");
 
     const sendMessage = document.querySelector("input#submit-message-value");
@@ -80,8 +104,9 @@ localStorage.getItem("lastname");
         socket.emit('s-id', socket.id);
     });
 
-    socket.on("start", () => {
-        textMessageContainer.innerHTML = "";
+    socket.on("start", (data) => {
+        data = JSON.parse(data);
+        loadMessage(data)
     });
 
     socket.on('receiveMessage', (message) => {
@@ -98,18 +123,26 @@ localStorage.getItem("lastname");
     }
 
     function showMessage (value) {
-        if (value.author === host){
+        if (value.name === LOGIN){
             textMessageContainer.innerHTML += getSendMessageHTML(value.name , value.message)
         }else{
             textMessageContainer.innerHTML += getReceiveMessageHTML(value.name, value.message)
         }
     }
 
+    function loadMessage (data) {
+        data.forEach(message => {
+            showMessage(message);
+        });
+    }
+
     
     sendBtn.addEventListener('click', () => {
-        const message = JSON.stringify({author:host , name: localStorage.getItem('name') , message: sendMessage.value}); 
-        socket.emit('sendMessage', message );
-        sendMessage.value = "";
+        if (sendMessage.value != ""){
+            const message = JSON.stringify({author:host , name: localStorage.getItem('name') , message: sendMessage.value}); 
+            socket.emit('sendMessage', message );
+            sendMessage.value = "";
+        }
     });
 
 
