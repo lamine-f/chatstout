@@ -95,7 +95,7 @@ io.on('connection', (socket) => {
         db.serialize(() => {
             db.run(`INSERT INTO messages(to_login, value) VALUES ('${user_login}', '${value}')`);
         });
-        console.log(message);
+        //console.log(message);
     });
 
     /*

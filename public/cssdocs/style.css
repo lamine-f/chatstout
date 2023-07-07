@@ -49,6 +49,26 @@ body{
     height: 3em;
 }
 
+.container .name h2{
+    cursor: pointer;
+}
+
+.squizze {
+    color: white;
+    animation: effect_squizze 0.2s;
+}
+
+@keyframes effect_squizze {
+    50% {
+        transform: translate(-5px, 0px);
+
+    }
+
+    100% {
+        transform: translate(10px, 0px);
+    }
+}
+
 .container .text-message {
     display: flex;
     flex-direction: column;

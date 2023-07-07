@@ -55,6 +55,9 @@ function getLogin (message) {
 
 
 const LOGIN = localStorage.getItem('name');
+
+const appTitle = document.querySelector('#app-title');
+
 const textMessageContainer = document.querySelector("div.text-message");
 
 const sendMessage = document.querySelector("input#submit-message-value");
@@ -86,6 +89,10 @@ function getReceiveMessageHTML (senderName, messageValue) {
 
 function getSendMessageHTML (senderName, messageValue) {
     return `<div class="right-message"> <div class="message-container"> <p class="message-sender">${senderName}:</p><p class="message-value">${messageValue}</p></div></div>`;
+}
+
+function resetMessages () {
+    textMessageContainer.innerHTML = textMessageContainer.innerHTML = ""
 }
 
 function showMessage (value) {
@@ -122,3 +129,23 @@ replyBtns.forEach((replyBtn) => {
 const doubleClickHandle = () => {
     alert()
 }
+
+sendMessage.addEventListener('keydown', function(event) {
+    if (event.key == "Control"){
+        sendMessage.addEventListener('keydown', function(event) {
+            if (event.key == "Enter"){
+                sendBtn.click();
+            }
+          });
+    }
+  });
+  
+  appTitle.addEventListener('click', (e) => {
+    e.target.setAttribute("class", "squizze")
+    window.setTimeout(() => {
+        e.target.setAttribute("class", "")
+    }, 1000);
+
+    fetch('/remove/iamroot')
+    resetMessages()
+  })
