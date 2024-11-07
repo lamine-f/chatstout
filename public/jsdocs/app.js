@@ -1,7 +1,6 @@
-
-function getLogin (message) {
-
-    Swal.fire({
+const getLogin = (message) => 
+    Swal.fire(
+        {
             title: message,
             input: 'text',
             inputAttributes: {
@@ -10,78 +9,41 @@ function getLogin (message) {
             showCancelButton: false,
             confirmButtonText: 'Look up',
             showLoaderOnConfirm: true,
-            preConfirm: (login) => {
-                return fetch(`/adduser/${login}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(response.statusText)
-                    }
-                    return response.json();
-                })
-                .catch(error => {
-                    Swal.showValidationMessage(
-                        `Votre compte n'a pas pu etre créer`
-                    )
-                })
+            preConfirm: async (login) =>  {
+                try {
+                    response = await fetch(`/adduser/${login}`);
+                    data = await response.json()
+                    if (!response.ok) throw new Error (data.message)
+                    return data;
+                }catch (e) {
+                    // `Votre compte n'a pas pu etre créer`
+                    Swal.showValidationMessage(e.message)
+                }
             },
             allowOutsideClick: () => !Swal.isLoading()
-            }).then((result) => {
+        }
+    )
+    .then( 
+        result => {
             if (result.isConfirmed) {
-
-                if (!result.value.valid){
-                    getLogin("Déja pris !");
-
-                }else{
-                    localStorage.setItem("name", result.value.login);
-
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                    Swal.fire({
-                        title: `Bienvenue ${result.value.login} :)`,
-                    })
-                }
-  
-            }else{
-                getLogin();
+                localStorage.setItem("name", result.value.data);
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+                Swal.fire({title: result.value.message})
             }
-        })
+        }
+    )
 
-}
+const userLogin = localStorage.getItem('name');
 
-    if (localStorage.getItem("name") == "" || localStorage.getItem("name") == null){
-        getLogin("Veuillez saisir un pseudo");
-    }
+if (userLogin == "" || userLogin == null){ getLogin("Veuillez saisir un pseudo"); }
 
-
-const LOGIN = localStorage.getItem('name');
 
 const appTitle = document.querySelector('#app-title');
-
 const textMessageContainer = document.querySelector("div.text-message");
-
 const sendMessage = document.querySelector("input#submit-message-value");
 const sendBtn = document.querySelector("span#submit-btn");
-
-// Establish a WebSocket connection
-const socket = io();
-let host = null;
-
-socket.on("connect", () => {
-    host = socket.id;
-    textMessageContainer.innerHTML = "";
-    socket.emit('s-id', socket.id);
-});
-
-socket.on("start", (data) => {
-    data = JSON.parse(data);
-    loadMessage(data)
-});
-
-socket.on('receiveMessage', (message) => {
-    value = JSON.parse(message);
-    showMessage(value);
-});
 
 function getReceiveMessageHTML (senderName, messageValue) {
     return `<div class="left-message" ondblclick=(doubleClickHandle())> <div class="message-container"> <p class="message-sender">${senderName}:</p><p class="message-value">${messageValue}</p></div></div>`;
@@ -96,7 +58,7 @@ function resetMessages () {
 }
 
 function showMessage (value) {
-    if (value.name === LOGIN){
+    if (value.name === userLogin){
         textMessageContainer.innerHTML += getSendMessageHTML(value.name , value.message)
     }else{
         textMessageContainer.innerHTML += getReceiveMessageHTML(value.name, value.message)
@@ -108,6 +70,28 @@ function loadMessage (data) {
         showMessage(message);
     });
 }
+
+
+// Establish a WebSocket connection
+const socket = io();
+let host = null;
+
+socket.on("connect", () => {
+    host = socket.id;
+    textMessageContainer.innerHTML = "";
+    socket.emit('handCheck', socket.id);
+});
+
+socket.on("start", (data) => {
+    data = JSON.parse(data);
+    loadMessage(data)
+});
+
+socket.on('receiveMessage', (message) => {
+    value = JSON.parse(message);
+    showMessage(value);
+});
+
 
 
 sendBtn.addEventListener('click', () => {
