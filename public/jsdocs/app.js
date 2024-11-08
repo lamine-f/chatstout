@@ -39,7 +39,6 @@ const userLogin = localStorage.getItem('name');
 
 if (userLogin == "" || userLogin == null){ getLogin("Veuillez saisir un pseudo"); }
 
-
 const appTitle = document.querySelector('#app-title');
 const textMessageContainer = document.querySelector("div.text-message");
 const sendMessage = document.querySelector("input#submit-message-value");
@@ -71,7 +70,6 @@ function loadMessage (data) {
     });
 }
 
-
 // Establish a WebSocket connection
 const socket = io();
 let host = null;
@@ -92,8 +90,6 @@ socket.on('receiveMessage', (message) => {
     showMessage(value);
 });
 
-
-
 sendBtn.addEventListener('click', () => {
     if (sendMessage.value != ""){
         const message = JSON.stringify({author:host , name: localStorage.getItem('name') , message: sendMessage.value}); 
@@ -101,7 +97,6 @@ sendBtn.addEventListener('click', () => {
         sendMessage.value = "";
     }
 });
-
 
 replyBtns = document.querySelectorAll('div.left-message');
 replyBtns.forEach((replyBtn) => {
@@ -124,12 +119,11 @@ sendMessage.addEventListener('keydown', function(event) {
     }
   });
   
-  appTitle.addEventListener('click', (e) => {
+appTitle.addEventListener('click', (e) => {
     e.target.setAttribute("class", "squizze")
     window.setTimeout(() => {
         e.target.setAttribute("class", "")
     }, 1000);
-
     fetch('/remove/iamroot')
     resetMessages()
-  })
+})
